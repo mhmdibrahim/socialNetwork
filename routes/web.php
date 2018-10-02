@@ -11,6 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+
+Auth::routes();
+
+Route::get('/', 'HomeController@index')->name('home');
+Route::get('/requests','UserController@index');
+Route::get('{id}/profile','UserController@profile');
+Route::post('{id}/profile','UserController@updateProfile');
