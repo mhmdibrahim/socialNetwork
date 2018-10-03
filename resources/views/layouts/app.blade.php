@@ -32,6 +32,9 @@
                     Profile
                 </a>
 
+                <a class="navbar-brand" href="/friends">
+                    Friends
+                </a>
                 <a class="navbar-brand" href="{{ url('/requests') }}">
                     requests
                 </a>

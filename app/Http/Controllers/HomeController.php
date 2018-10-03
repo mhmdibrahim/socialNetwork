@@ -31,6 +31,8 @@ class HomeController extends Controller
         $user_friends = User_Friend::where('user_from',auth()->user()->id)
                                     ->orWhere('user_to',auth()->user()->id)->get();
         $friendsIds = [];
+        //TODO: include myself in friends array
+
         foreach ($user_friends as $friend){
             if($friend->user_from == auth()->id()){
                 $friendsIds[] = $friend->user_to;
@@ -38,11 +40,28 @@ class HomeController extends Controller
                 $friendsIds[] = $friend->user_from;
             }
         }
+        $friendsIds[] = auth()->user()->id;
 //        dd($friendsIds);
 //        dd($user_friends);
         $users = User::whereNotIn('id',$friendsIds)->paginate(10);
 //        dd($users);
         return view('home')->with('members',$users)
                                 ->with('requests',$requests);
+    }
+
+    public function sentRequest($id){
+        $request =new Request();
+        $request->user_from = auth()->user()->id ;
+        $request->user_to = $id ;
+        $request->save();
+        return redirect()->route('home');
+    }
+
+    public function cancelRequest($id){
+        $request = Request::where('user_from',auth()->user()->id)
+                            ->where('user_to',$id)->get()->pluck('id');
+        Request::destroy($request);
+        return redirect()->route('home');
+
     }
 }

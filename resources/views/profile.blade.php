@@ -1,18 +1,31 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @foreach($user as $value)
-        <form method="post" action="/{{$value->id}}/profile">
-            {{csrf_field()}}
-        <div class="row">
-            <label class="col-form-label-lg">user Name</label>
-            <input class="input-group-lg text-lg-center" type="text" name="name" value="{{$value->name}}">
-        </div>
-        <div class="row align-content-center">
-            <button class="btn btn-info">Update Profile</button>
-            </div>
-        </form>
-        @endforeach
+                <table class="table table-hover">
+                    <tr>
+                        <th >Name</th>
+                        <th >email</th>
+                    </tr>
+                    <tbody>
+                    @foreach($user as $value)
+                     <tr>
+                         <td>{{$value->name}}</td>
+                         <td>{{$value->email}}</td>
+                    </tr>
 
+                    </tbody>
+                </table>
+            @if(auth()->user()->id == $value->id)
+                <div class="form-group">
+                    <a class="btn btn-info" href="/profile/edit">Edit Profile</a>
+                </div>
+            @endif
+            @if(in_array($value->id,$myfriends))
+                <div class="form-group">
+                <a class="btn btn-info" href="/{{$value->id}}/posts">Show All Posts</a>
+                </div>
+            @endif
+            @endforeach
     </div>
+
 @endsection
