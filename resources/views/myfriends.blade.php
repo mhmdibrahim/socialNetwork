@@ -7,8 +7,9 @@
                     <div class="card-header">All Friends</div>
                     <div class="card-body">
                         @forelse($friends as $friend)
-                                <label class="text-primary">{{$friend->name}}</label>
-                                <br>
+                                <a href="/{{$friend->id}}/profile" class="text-primary">{{$friend->name}}</a>
+                                <a href="/{{$friend->id}}/friend/delete" class="btn btn-danger float-md-right">Delete Friend</a>
+                            <br>
                             <hr>
                             @empty
                             <label class="text-primary">No Friends Founded!</label>

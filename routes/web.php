@@ -28,4 +28,8 @@ Route::get('/friends','UserController@showFriends');
 Route::get('/profile/edit','UserController@editMyProfile');
 Route::post('/profile/edit','UserController@updateProfile');
 Route::get('/{id}/posts','UserController@showposts');
+Route::get('/{id}/post/delete','UserController@deletePost');
+Route::get('/{id}/friend/delete','UserController@deleteFriend');
+Route::post('/add/comment','UserController@addComment');
+Route::get('/post/{id}/comments','UserController@showComments');
 
