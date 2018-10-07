@@ -13,7 +13,9 @@
             @forelse($comments as $comment)
                 <tr>
                     <td>{{$comment->body}}</td>
-                    <td>{{$comment->user->name}}</td>
+                    <td>@if($comment->user->name === auth()->user()->name)  <b>Me</b> @else <b> {{$comment->user->name}} </b> @endif
+                    @if($post->user_id == auth()->user()->id || (auth()->user()->id == $comment->user->id))<a class="btn btn-danger float-md-right" href="/comment/{{$comment->id}}/delete">Delete</a>@endif
+                    </td>
                 </tr>
                 @empty
                 <tr>

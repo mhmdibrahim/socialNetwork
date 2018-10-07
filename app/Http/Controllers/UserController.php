@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Like;
 use App\Post;
 use App\Request;
 use App\User;
@@ -26,6 +27,7 @@ class UserController extends Controller
 
     public function profile($id)
     {
+        $posts = Post::count()-1;
         $user = User::where('id', $id)->get();
         $friends = User_Friend::where('user_from', auth()->user()->id)
             ->orWhere('user_to', auth()->user()->id)->get();
@@ -39,7 +41,8 @@ class UserController extends Controller
         }
         $my_friends[] = auth()->user()->id;
         return view('profile')->with('myfriends', $my_friends)
-            ->with('user', $user);
+            ->with('user', $user)
+            ->with('posts',$posts);
     }
 
     public function updateProfile(\Illuminate\Http\Request $request)
@@ -104,13 +107,12 @@ class UserController extends Controller
 
     public function showposts($id)
     {
-        $posts = Post::with('comments')->where('user_id', $id)->get();
-//        dd($posts);
-        $comments = Comment::with('post')->get();
+        // TODO : Try to make this line with DB instead
+        $posts = Post::withCount('comments')->withCount('likes')->where('user_id', $id)->get();
+        $comments = Comment::withCount('post')->get();
 //        dd($comments);
         return view('post')->with('posts', $posts)
             ->with('id', $id);
-
     }
 
     public function deletePost($id)
@@ -143,5 +145,34 @@ class UserController extends Controller
 //        dd($comments);
         return view('comments')->with('comments',$comments)
                                     ->with('post',$post);
+    }
+
+    public function deleteComment($id){
+        Comment::destroy($id);
+        return redirect()->back();
+
+    }
+
+    public function showLikes($id){
+        $likes = Like::where('post_id',$id)->get();
+//        dd($likes);
+        return view('likes')->with('likes',$likes);
+    }
+    public function putLike($id)
+    {
+            $like = new Like();
+            $like->user_id = auth()->user()->id;
+            $like->post_id = $id;
+            $like->save();
+
+        return redirect()->back();
+    }
+
+    public function unlike($id)
+    {
+        Like::where('post_id',$id)
+            ->where('user_id',auth()->user()->id)->delete();
+        return redirect()->back();
+
     }
 }

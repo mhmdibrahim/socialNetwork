@@ -22,7 +22,7 @@
             @endif
             @if(in_array($value->id,$myfriends))
                 <div class="form-group">
-                <a class="btn btn-info" href="/{{$value->id}}/posts">Show All Posts</a>
+                <a class="btn btn-info" href="/{{$value->id}}/posts">Show All Posts</a><b> ({{$posts}} Posts)</b>
                 </div>
             @endif
             @endforeach

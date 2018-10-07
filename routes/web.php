@@ -32,4 +32,7 @@ Route::get('/{id}/post/delete','UserController@deletePost');
 Route::get('/{id}/friend/delete','UserController@deleteFriend');
 Route::post('/add/comment','UserController@addComment');
 Route::get('/post/{id}/comments','UserController@showComments');
-
+Route::get('/comment/{id}/delete','UserController@deleteComment');
+Route::get('/post/{id}/likes','UserController@showLikes');
+Route::get('/post/{id}/like','UserController@putLike');
+Route::get('/post/{id}/unlike','UserController@unlike');

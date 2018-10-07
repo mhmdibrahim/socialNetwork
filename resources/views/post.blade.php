@@ -20,17 +20,28 @@
     <div class="text-md-center">
     <table class="table table-hover">
     <tr>
-    <th>Show All posts</th>
+    <th>Show All posts </th>
     </tr>
     <tbody>
     @forelse($posts as $post)
     <tr>
-    <td>{{$post->text}}
+    <td><b>{{$post->text}}</b>
             @if(\Illuminate\Support\Facades\Auth::check())
             <a href="/{{$post->id}}/post/delete" class="float-md-right btn btn-danger">Delete Post</a>
             @endif
-            <br>
-            <a href="/post/{{$post->id}}/comments" class="btn btn-primary">Show Post Comments</a>
+        <br>
+                @php
+                    $like= \App\Like::where('user_id',auth()->user()->id)
+                                ->where('post_id',$post->id)->count();
+                @endphp
+                @if($like > 0)
+            <a href="/post/{{$post->id}}/unlike" class="btn btn-outline-info">UnLike</a> <b> ({{$post->likes_count}} likes) </b>
+                @else
+            <a href="/post/{{$post->id}}/like" class="btn btn-outline-info">Like</a> <b> ({{$post->likes_count}} likes) </b>
+                @endif
+                <a href="/post/{{$post->id}}/likes" class="btn btn-outline-info"><b>show All Likes</b></a>
+            <br> <br>
+            <a href="/post/{{$post->id}}/comments" class="btn btn-primary">Show Post Comments</a> <b>( {{$post->comments_count}} Comments )  </b>
     </td>
 
     </tr>
