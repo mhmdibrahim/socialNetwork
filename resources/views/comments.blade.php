@@ -13,9 +13,21 @@
             @forelse($comments as $comment)
                 <tr>
                     <td>{{$comment->body}}
-                    <a href="#" class="btn btn-info">Like</a>
-                        <br><br>
-                    <a href="#" class="btn-primary">Show All Likes</a>
+                    @php
+                    $comment_like = \Illuminate\Support\Facades\DB::table('comment_likes')->where('post_id',$post->id)
+                                                                    ->where('user_id',auth()->user()->id)
+                                                                    ->where('comment_id',$comment->id)->get();
+
+                    $post_comment_likes = \Illuminate\Support\Facades\DB::table('comment_likes')->where('post_id',$post->id)
+                                                                    ->where('comment_id',$comment->id)->count();
+                    @endphp
+                     @if(count($comment_like) > 0)
+                        <a href="/comment/{{$comment_like[0]->id}}/commentUnlike" class="btn btn-info">UnLike</a>
+                     @else
+                        <a href="/{{$post->id}}/comment/{{$comment->id}}/commentLike" class="btn btn-info">Like</a>
+                     @endif
+                            <br><br>
+                    <a href="/{{$post->id}}/comment/{{$comment->id}}/likes" class="btn-primary">Show All Likes</a> <b>{{$post_comment_likes}} Likes</b>
                     </td>
                     <td>@if($comment->user->name === auth()->user()->name)  <b>Me</b> @else <b> {{$comment->user->name}} </b> @endif
                     @if($post->user_id == auth()->user()->id || (auth()->user()->id == $comment->user->id))

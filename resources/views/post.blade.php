@@ -31,17 +31,19 @@
             @endif
         <br>
                 @php
-                    $like= \App\Like::where('user_id',auth()->user()->id)
-                                ->where('post_id',$post->id)->count();
+                    $likes= \App\Like::where('post_id',$post->id)->count();
+                    $comments = \App\Comment::where('post_id',$post->id)->count();
+                    $like  = \App\Like::where('post_id',$post->id)
+                                        ->where('user_id',auth()->user()->id)->count();
                 @endphp
                 @if($like > 0)
-            <a href="/post/{{$post->id}}/unlike" class="btn btn-outline-info">UnLike</a> <b> ({{$post->likes_count}} likes) </b>
+            <a href="/post/{{$post->id}}/unlike" class="btn btn-outline-info tab-pane">UnLike</a> <b> ({{$likes}} likes) </b>
                 @else
-            <a href="/post/{{$post->id}}/like" class="btn btn-outline-info">Like</a> <b> ({{$post->likes_count}} likes) </b>
+            <a href="/post/{{$post->id}}/like" class="btn btn-outline-info">Like</a> <b> ({{$likes}} likes) </b>
                 @endif
-                <a href="/post/{{$post->id}}/likes" class="btn btn-outline-info"><b>show All Likes</b></a>
+                <a href="/post/{{$post->id}}/likes"  class="btn btn-outline-info"><b>show All Likes</b></a>
             <br> <br>
-            <a href="/post/{{$post->id}}/comments" class="btn btn-primary">Show Post Comments</a> <b>( {{$post->comments_count}} Comments )  </b>
+            <a href="/post/{{$post->id}}/comments"  class="btn btn-primary">Show Post Comments</a> <b>( {{$comments}} Comments )  </b>
     </td>
 
     </tr>
