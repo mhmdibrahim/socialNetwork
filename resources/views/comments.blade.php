@@ -20,6 +20,7 @@
 
                     $post_comment_likes = \Illuminate\Support\Facades\DB::table('comment_likes')->where('post_id',$post->id)
                                                                     ->where('comment_id',$comment->id)->count();
+                    $comment_user = \App\User::find($comment->user_id);
                     @endphp
                      @if(count($comment_like) > 0)
                         <a href="/comment/{{$comment_like[0]->id}}/commentUnlike" class="btn btn-info">UnLike</a>
@@ -29,8 +30,8 @@
                             <br><br>
                     <a href="/{{$post->id}}/comment/{{$comment->id}}/likes" class="btn-primary">Show All Likes</a> <b>{{$post_comment_likes}} Likes</b>
                     </td>
-                    <td>@if($comment->user->name === auth()->user()->name)  <b>Me</b> @else <b> {{$comment->user->name}} </b> @endif
-                    @if($post->user_id == auth()->user()->id || (auth()->user()->id == $comment->user->id))
+                    <td>@if($comment_user->name === auth()->user()->name)  <b>Me</b> @else <b> {{$comment_user->name}} </b> @endif
+                    @if($post->user_id == auth()->user()->id || (auth()->user()->id == $comment_user->id))
                             <a class="btn btn-danger float-md-right" href="/comment/{{$comment->id}}/delete">Delete</a>@endif
                     </td>
                 </tr>

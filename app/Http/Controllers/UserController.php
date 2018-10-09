@@ -181,7 +181,8 @@ class UserController extends Controller
 //        $comment_likes = DB::table('comment_likes')->where('post_id',$id)->count();
 //        $post = Post::find($id) ;
         $post = DB::table('posts')->find($id);
-        $comments = Comment::with('user')->where('post_id',$id)->get();
+        $comments = DB::table('comments')->where('post_id',$id)->get();
+//        $comments = Comment::with('user')->where('post_id',$id)->get();
 //        dd($comments);
         return view('comments')->with('comments',$comments)
                                     ->with('post',$post);
