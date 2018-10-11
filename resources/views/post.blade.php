@@ -26,7 +26,7 @@
     @forelse($posts as $post)
     <tr>
     <td><b>{{$post->text}}</b>
-            @if(\Illuminate\Support\Facades\Auth::check())
+            @if(auth()->user()->id== $post->user_id)
             <a href="/{{$post->id}}/post/delete" class="float-md-right btn btn-danger">Delete Post</a>
             @endif
         <br>
