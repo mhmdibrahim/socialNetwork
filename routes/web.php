@@ -38,4 +38,5 @@ Route::get('/post/{id}/like','UserController@putLike');
 Route::get('/post/{id}/unlike','UserController@unlike');
 Route::get('/{id1}/comment/{id2}/likes','UserController@showCommentLikes');
 Route::get('/{id1}/comment/{id2}/commentLike','UserController@likeComment');
-Route::get('//comment/{id}/commentUnlike','UserController@unlikeComment');
+Route::get('/comment/{id}/commentUnlike','UserController@unlikeComment');
+Route::get('/user/{id1}/post/{id2}/share','UserController@share');

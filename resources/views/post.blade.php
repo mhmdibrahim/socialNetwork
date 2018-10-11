@@ -25,27 +25,62 @@
     <tbody>
     @forelse($posts as $post)
     <tr>
-    <td><b>{{$post->text}}</b>
-            @if(auth()->user()->id== $post->user_id)
-            <a href="/{{$post->id}}/post/delete" class="float-md-right btn btn-danger">Delete Post</a>
-            @endif
-        <br>
-                @php
-                    $likes= \App\Like::where('post_id',$post->id)->count();
-                    $comments = \App\Comment::where('post_id',$post->id)->count();
-                    $like  = \App\Like::where('post_id',$post->id)
-                                        ->where('user_id',auth()->user()->id)->count();
-                @endphp
-                @if($like > 0)
-            <a href="/post/{{$post->id}}/unlike" class="btn btn-outline-info tab-pane">UnLike</a> <b> ({{$likes}} likes) </b>
-                @else
-            <a href="/post/{{$post->id}}/like" class="btn btn-outline-info">Like</a> <b> ({{$likes}} likes) </b>
+    @if($post->origin_user_id == null)
+        <td><b>{{$post->text}}</b>
+                @if(auth()->user()->id== $post->user_id)
+                <a href="/{{$post->id}}/post/delete" class="float-md-right btn btn-danger">Delete Post</a>
                 @endif
-                <a href="/post/{{$post->id}}/likes"  class="btn btn-outline-info"><b>show All Likes</b></a>
-            <br> <br>
-            <a href="/post/{{$post->id}}/comments"  class="btn btn-primary">Show Post Comments</a> <b>( {{$comments}} Comments )  </b>
-    </td>
+            <br>
+                    @php
+                        $likes= \App\Like::where('post_id',$post->id)->count();
+                        $comments = \App\Comment::where('post_id',$post->id)->count();
+                        $like  = \App\Like::where('post_id',$post->id)
+                                            ->where('user_id',auth()->user()->id)->count();
+                    @endphp
 
+                @if($like > 0)
+                <a href="/post/{{$post->id}}/unlike" class="btn btn-outline-info tab-pane">UnLike</a> <b> ({{$likes}} likes) </b>
+                    @else
+                <a href="/post/{{$post->id}}/like" class="btn btn-outline-info">Like</a> <b> ({{$likes}} likes) </b>
+                    @endif
+
+                    <a href="/post/{{$post->id}}/likes"  class="btn btn-outline-info"><b>show All Likes</b></a>
+                    @if($post->user_id != auth()->user()->id)
+                    <a href="/user/{{$post->user_id}}/post/{{$post->id}}/share"  class="btn btn-dark"><b>Share</b></a>
+                    @endif
+            <br> <br>
+                <a href="/post/{{$post->id}}/comments"  class="btn btn-primary">Show Post Comments</a> <b>( {{$comments}} Comments )  </b>
+        </td>
+        @elseif($post->origin_user_id !=auth()->user()->id)
+            <td>
+
+                @php
+                    $friend = \App\User::find($post->origin_user_id);
+                    $posted = \App\User::find($post->user_id);
+                    $user_friend = \Illuminate\Support\Facades\DB::table('user_friends')->where('user_from',$post->origin_user_id)->orWhere('user_to',$post->origin_user_id)->get();
+                    $friends=[];
+                    foreach($user_friend as $value){
+                        if ($value->user_from == $post->origin_user_id){
+                            $friends[]=$value->user_to ;
+                        }
+                        else{
+                            $friends[]=$value->user_from;
+                        }
+                    }
+                @endphp
+               <a href="/{{$post->user_id}}/profile">{{$posted->name}}</a> Shared <a href="/{{$friend->id}}/profile">{{$friend->name}}'s</a>
+                @if(in_array(auth()->user()->id,$friends))
+                    @php
+                        $origin_post= \Illuminate\Support\Facades\DB::table('posts')->find($post->orgin_post_id);
+                    @endphp
+                <a href="/post/{{$post->orgin_post_id}}/comments">Post</a>
+                    <br>
+                    <h3>{{$origin_post->text}}</h3>
+                @else
+                 Post <br>NoT Allowed To show Post
+                @endif
+            </td>
+    @endif
     </tr>
     @empty
     <tr>

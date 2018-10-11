@@ -29,7 +29,7 @@ class UserController extends Controller
 
     public function profile($id)
     {
-        $posts = DB::table('posts')->count()-1 ;
+        $posts = DB::table('posts')->where('user_id',$id)->count() ;
 //        $posts = Post::count()-1;
         $user = DB::table('users')->where('id',$id)->get();
 //        $user = User::where('id', $id)->get();
@@ -134,15 +134,30 @@ class UserController extends Controller
     public function showposts($id)
     {
         // TODO : Try to make this line with DB instead
-//        $posts = DB::table('posts')->
-
-        $posts = Post::where('user_id', $id)->get();
+//
+        $posts = DB::table('posts')->where('user_id', $id)->get();
+        $user_friend =DB::table('user_friends')->where('user_from',$id)
+                                ->orWhere('user_to',$id)->get();
+        $friends=[];
+        foreach ($user_friend as $friend){
+            if ($friend->user_from == $id){
+                $friends[] = $friend->user_to ;
+            }
+            else{
+                $friends[] = $friend->user_from ;
+            }
+        }
+//        dd($friends);
+        if(!in_array(auth()->user()->id,$friends) && auth()->user()->id !=$id){
+            return abort(404);
+        }
+//        dd($friends);
 //        dd($comments);
 //        dd($id);
         return view('post')->with('posts', $posts)
-            ->with('id', $id);
+                                ->with('id', $id)
+                                ->with('users_friends',$friends);
     }
-
     public function deletePost($id)
     {
         DB::table('posts')->where('id',$id)->delete();
@@ -181,6 +196,23 @@ class UserController extends Controller
 //        $comment_likes = DB::table('comment_likes')->where('post_id',$id)->count();
 //        $post = Post::find($id) ;
         $post = DB::table('posts')->find($id);
+        $user_id = $post->user_id ;
+        $user_friend =DB::table('user_friends')->where('user_from',$user_id)
+            ->orWhere('user_to',$user_id)->get();
+        $friends=[];
+        foreach ($user_friend as $friend){
+            if ($friend->user_from == $user_id){
+                $friends[] = $friend->user_to ;
+            }
+            else{
+                $friends[] = $friend->user_from ;
+            }
+        }
+//        dd($friends);
+        if(!in_array(auth()->user()->id,$friends) && auth()->user()->id !=$user_id){
+            return abort(404);
+        }
+
         $comments = DB::table('comments')->where('post_id',$id)->get();
 //        $comments = Comment::with('user')->where('post_id',$id)->get();
 //        dd($comments);
@@ -245,6 +277,16 @@ class UserController extends Controller
     public function unlikeComment($id)
     {
         DB::table('comment_likes')->where('id',$id)->delete();
+        return redirect()->back();
+    }
+
+    public function share($origin_user_id , $origin_post_id){
+        DB::table('posts')->insert([
+            'user_id'=>auth()->user()->id,
+            'text'=>null,
+            'origin_user_id'=>$origin_user_id,
+            'orgin_post_id'=>$origin_post_id,
+        ]);
         return redirect()->back();
     }
 }

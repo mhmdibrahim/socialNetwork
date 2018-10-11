@@ -12,7 +12,6 @@
                          <td>{{$value->name}}</td>
                          <td>{{$value->email}}</td>
                     </tr>
-
                     </tbody>
                 </table>
             @if(auth()->user()->id == $value->id)
