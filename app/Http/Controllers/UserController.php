@@ -228,9 +228,27 @@ class UserController extends Controller
     }
 
     public function showLikes($id){
+
         $likes =DB::table('likes')->where('post_id',$id)->get();
+        $post = DB::table('posts')->find($id);
+        $user_id = $post->user_id;
+        $user_friends = DB::table('user_friends')->where('user_from',$user_id)
+            ->orWhere('user_to',$user_id)->get()->toArray();
+        $friends=[];
+        foreach ($user_friends as $user_friend){
+            if ($user_friend->user_from = $user_id){
+                $friends[]=$user_friend->user_to;
+            }
+            else{
+                $friends[]=$user_friend->user_from;
+            }
+        }
+        if (!in_array(auth()->user()->id,$friends)){
+            return abort(404);
+        }
 //        $likes = Like::where('post_id',$id)->get();
 //        dd($likes);
+
         return view('likes')->with('likes',$likes);
     }
     public function putLike($id)
@@ -243,7 +261,6 @@ class UserController extends Controller
 //            $like->user_id = auth()->user()->id;
 //            $like->post_id = $id;
 //            $like->save();
-
         return redirect()->back();
     }
 
@@ -254,14 +271,29 @@ class UserController extends Controller
 //        Like::where('post_id',$id)
 //            ->where('user_id',auth()->user()->id)->delete();
         return redirect()->back();
-
     }
 
     public function showCommentLikes($id1 ,$id2)
     {
         $likes = DB::table('comment_likes')->where('post_id',$id1)
                             ->where('comment_id',$id2)->get();
-//        dd($likes);
+
+        $post = DB::table('posts')->find($id1);
+        $user_id = $post->user_id;
+        $user_friends = DB::table('user_friends')->where('user_from',$user_id)
+            ->orWhere('user_to',$user_id)->get()->toArray();
+        $friends=[];
+        foreach ($user_friends as $user_friend){
+            if ($user_friend->user_from = $user_id){
+                $friends[]=$user_friend->user_to;
+            }
+            else{
+                $friends[]=$user_friend->user_from;
+            }
+        }
+        if (!in_array(auth()->user()->id,$friends)){
+            return abort(404);
+        }
         return view('comment_likes')->with('likes',$likes);
     }
     public function likeComment($id1,$id2)
