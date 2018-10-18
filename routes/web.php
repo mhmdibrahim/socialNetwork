@@ -19,7 +19,7 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/requests','UserController@index');
 Route::get('{id}/profile','UserController@profile');
-Route::post('{id}/post/create','UserController@createPost');
+Route::post('post/create','UserController@createPost');
 Route::get('/request/{id}/accept','UserController@acceptRequest');
 Route::get('/request/{id}/cancel','UserController@cancelRequest');
 Route::get('/request/{id}/sent','HomeController@sentRequest');

@@ -7,24 +7,21 @@
                         <th >email</th>
                     </tr>
                     <tbody>
-                    @foreach($user as $value)
                      <tr>
-                         <td>{{$value->name}}</td>
-                         <td>{{$value->email}}</td>
+                         <td>{{$user->name}}</td>
+                         <td>{{$user->email}}</td>
                     </tr>
-                    </tbody>
                 </table>
-            @if(auth()->user()->id == $value->id)
+            @if(auth()->user()->id == $user->id)
                 <div class="form-group">
                     <a class="btn btn-info" href="/profile/edit">Edit Profile</a>
                 </div>
             @endif
-            @if(in_array($value->id,$myfriends))
+            @if(in_array($user->id,$myfriends))
                 <div class="form-group">
-                <a class="btn btn-info" href="/{{$value->id}}/posts">Show All Posts</a><b> ({{$posts}} Posts)</b>
+                <a class="btn btn-info" href="/{{$user->id}}/posts">Show All Posts</a><b> ({{$posts}} Posts)</b>
                 </div>
             @endif
-            @endforeach
     </div>
 
 @endsection

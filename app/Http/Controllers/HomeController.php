@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\User_Friend;
 use App\Request;
+use Illuminate\Support\Collection;
 use function PhpParser\filesInDir;
 
 class HomeController extends Controller
@@ -50,6 +51,7 @@ class HomeController extends Controller
     }
 
     public function sentRequest($id){
+        User::findOrFail($id);
         $request =new Request();
         $request->user_from = auth()->user()->id ;
         $request->user_to = $id ;
@@ -60,6 +62,10 @@ class HomeController extends Controller
     public function cancelRequest($id){
         $request = Request::where('user_from',auth()->user()->id)
                             ->where('user_to',$id)->get()->pluck('id');
+        /** @var $request Collection */
+        if($request->isEmpty()){
+            abort(404);
+        }
         Request::destroy($request);
         return redirect()->route('home');
 
