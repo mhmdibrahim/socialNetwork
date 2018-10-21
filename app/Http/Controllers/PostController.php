@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index($user_id)
     {
         $posts = DB::table('posts')->where('user_id', $user_id)->get();

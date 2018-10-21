@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\DB;
 
 class FriendRequestController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index()
     {
         // Array of users' ids that I have sent requests to

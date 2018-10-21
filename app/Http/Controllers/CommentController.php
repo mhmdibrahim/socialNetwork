@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function add(Request $request)
     {
         DB::table('comments')->insert([
