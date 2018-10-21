@@ -9,13 +9,20 @@
                         @foreach($members as $member)
                             <a href="/{{$member->id}}/profile">{{$member->name}}</a>
                             @if(!(in_array($member->id,$requests)))
-                                <a class="btn btn-primary float-lg-right" href="/request/{{$member->id}}/sent">
-                                    Add Friend
-                                </a>
+                                <form class="d-inline" action="/requests/{{$member->id}}/send" method="POST">
+                                    @csrf
+                                    <button class="btn btn-primary float-lg-right" type="submit">
+                                        Add friend
+                                    </button>
+                                </form>
+
                             @else
-                                <a class="btn btn-danger float-lg-right" href="/request/{{$member->id}}/cancelRequest">
-                                    Cancel Request
-                                </a>
+                                <form class="d-inline" action="/requests/{{$member->id}}/cancel" method="POST">
+                                    @csrf
+                                    <button class="btn btn-danger float-lg-right" type="submit">
+                                        Cancel Request
+                                    </button>
+                                </form>
                             @endif
                             <hr>
                             <br>

@@ -13,8 +13,15 @@
             <tr>
                 @forelse($users as $user)
                 <td>{{$user->name}}</td>
-                <td><a href="/request/{{$user->id}}/accept"><button class=" btn btn-primary">Accept</button></a>
-                    <a href="/request/{{$user->id}}/cancel"><button class="btn btn-danger">Remove</button></a></td>
+                <td>
+                    <form class="d-inline" action="/requests/{{$user->id}}/accept" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Accept</button>
+                    </form>
+                    <form class="d-inline" action="/requests/{{$user->id}}/reject" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-danger">Reject</button>
+                    </form>
                     <hr>
             </tr>
                 @empty

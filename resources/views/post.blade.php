@@ -2,8 +2,8 @@
 @section('content')
     <div class="text-md-center">
         @if($id == auth()->user()->id)
-            <form method="post" action="/post/create">
-                {{csrf_field()}}
+            <form method="post" action="/posts/create">
+                @csrf
                 <div class="form-group">
                     <label>Create New Post</label>
                 </div>
@@ -30,8 +30,11 @@
                         <td><b>{{$post->text}}</b>
                             {{--enable delete if the viewer of the profile is the profile owner--}}
                             @if(auth()->user()->id== $post->user_id)
-                                <a href="/{{$post->id}}/post/delete" class="float-md-right btn btn-danger">Delete
-                                    Post</a>
+                                <form class="d-inline" method="post" action="/{{$post->id}}/delete">
+                                    @csrf
+                                    <button type="submit" class="float-md-right btn btn-danger">Delete
+                                    Post</button>
+                                </form>
                             @endif
                             <br>
                             @php
@@ -42,11 +45,17 @@
                             @endphp
 
                             @if($like > 0)
-                                <a href="/post/{{$post->id}}/unlike" class="btn btn-outline-info tab-pane">UnLike</a>
-                                <b> ({{$likes}} likes) </b>
+                                <form class="d-inline" method="post" action="/posts/{{$post->id}}/unlike">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-info">UnLike</button> <b> ({{$likes}}
+                                        likes) </b>
+                                </form>
                             @else
-                                <a href="/post/{{$post->id}}/like" class="btn btn-outline-info">Like</a> <b> ({{$likes}}
+                                <form class="d-inline" method="post" action="/posts/{{$post->id}}/like">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-info">Like</button> <b> ({{$likes}}
                                     likes) </b>
+                                </form>
                             @endif
 
                             <a href="/post/{{$post->id}}/likes" class="btn btn-outline-info"><b>show All Likes</b></a>

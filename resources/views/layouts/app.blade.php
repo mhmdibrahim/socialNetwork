@@ -28,7 +28,7 @@
                     {{ config('app.name', 'Home') }}
                 </a>
 
-                <a class="navbar-brand" href="/{{auth()->user()->id}}/profile">
+                <a class="navbar-brand" href="/profile/{{auth()->user()->id}}">
                     Profile
                 </a>
 

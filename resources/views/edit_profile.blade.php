@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="text-md-center">
-        <form method="post" action="/profile/edit">
+        <form method="post" action="/profile/update">
             {{csrf_field()}}
             <div class="form-group">
                 <label>Name</label>
