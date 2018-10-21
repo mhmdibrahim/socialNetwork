@@ -7,7 +7,7 @@
                     <div class="card-header">All Friends</div>
                     <div class="card-body">
                         @forelse($friends as $friend)
-                                <a href="/{{$friend->id}}/profile" class="text-primary">{{$friend->name}}</a>
+                                <a href="/profile/{{$friend->id}}" class="text-primary">{{$friend->name}}</a>
                                 <a href="/{{$friend->id}}/friend/delete" class="btn btn-danger float-md-right">Delete Friend</a>
                             <br>
                             <hr>

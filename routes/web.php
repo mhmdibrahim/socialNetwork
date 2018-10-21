@@ -41,6 +41,7 @@ Route::prefix('requests')->group(function (){
 Route::prefix('profile')->group(function (){
     Route::get('edit','ProfileController@edit');
     Route::post('update','ProfileController@update');
+    Route::get('{user_id}','ProfileController@index');
 });
 
 Route::prefix('posts')->group(function (){
@@ -48,18 +49,20 @@ Route::prefix('posts')->group(function (){
     Route::post('{post_id}/like','PostController@like');
     Route::post('{post_id}/unlike','PostController@unlike');
     Route::post('{post_id}/delete','PostController@delete');
+    Route::get('{post_id}/likes','PostController@showLikes');
     Route::get('{user_id}','PostController@index');
+    Route::get('{post_id}/comments','PostController@showComments');
+    Route::post('{post_id}/share','PostController@share');
+});
 
+Route::prefix('comments')->group(function (){
+    Route::post('/add','CommentController@add');
+    Route::post('/{comment_id}/delete','CommentController@delete');
+    Route::get('{comment_id}/post/{post_id}/likes','CommentController@showLikes');
+    Route::post('{comment_id}/post/{post_id}/like','CommentController@like');
+    Route::post('{like_id}/unlike','CommentController@unlike');
 });
 
 Route::get('/friends','UserController@showFriends');
-//Route::get('/{id}/post/delete','UserController@deletePost');
 Route::get('/{id}/friend/delete','UserController@deleteFriend');
-Route::post('/add/comment','UserController@addComment');
-Route::get('/post/{id}/comments','UserController@showComments');
-Route::get('/comment/{id}/delete','UserController@deleteComment');
-Route::get('/post/{id}/likes','UserController@showLikes');
-Route::get('/{id1}/comment/{id2}/likes','UserController@showCommentLikes');
-Route::get('/{id1}/comment/{id2}/commentLike','UserController@likeComment');
-Route::get('/comment/{id}/commentUnlike','UserController@unlikeComment');
-Route::get('/user/{id1}/post/{id2}/share','UserController@share');
+

@@ -30,7 +30,7 @@
                         <td><b>{{$post->text}}</b>
                             {{--enable delete if the viewer of the profile is the profile owner--}}
                             @if(auth()->user()->id== $post->user_id)
-                                <form class="d-inline" method="post" action="/{{$post->id}}/delete">
+                                <form class="d-inline" method="post" action="/posts/{{$post->id}}/delete">
                                     @csrf
                                     <button type="submit" class="float-md-right btn btn-danger">Delete
                                     Post</button>
@@ -57,13 +57,15 @@
                                     likes) </b>
                                 </form>
                             @endif
-
-                            <a href="/post/{{$post->id}}/likes" class="btn btn-outline-info"><b>show All Likes</b></a>
-                            @if($post->user_id != auth()->user()->id)
-                                <a href="/user/{{$post->user_id}}/post/{{$post->id}}/share" class="btn btn-dark"><b>Share</b></a>
+                                    <a type="submit" class="btn btn-outline-info" href="/posts/{{$post->id}}/likes"><b>show All Likes</b></a>
+                                @if($post->user_id != auth()->user()->id)
+                                <form class="d-inline" method="post" action="/posts/{{$post->id}}/share">
+                                    @csrf
+                                    <button type="submit" class="btn btn-dark"><b>Share</b></button>
+                                </form>
                             @endif
                             <br> <br>
-                            <a href="/post/{{$post->id}}/comments" class="btn btn-primary">Show Post Comments</a>
+                            <a href="/posts/{{$post->id}}/comments" class="btn btn-primary">Show Post Comments</a>
                             <b>( {{$comments}} Comments ) </b>
                         </td>
                     @elseif($post->origin_user_id !=auth()->user()->id)

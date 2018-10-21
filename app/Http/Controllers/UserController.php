@@ -190,11 +190,7 @@ class UserController extends Controller
             'user_id'=>auth()->user()->id,
             'post_id'=>$request->post_id,
         ]);
-//        $comment = new Comment();
-//        $comment->body = $request->body ;
-//        $comment->user_id = auth()->user()->id ;
-//        $comment->post_id = $request->post_id;
-//        $comment->save();
+
         return redirect()->back();
     }
 
@@ -279,12 +275,11 @@ class UserController extends Controller
         return redirect()->back();
     }
 
-    public function showCommentLikes($id1 ,$id2)
+    public function showCommentLikes($comment_id ,$post_id)
     {
-        $likes = DB::table('comment_likes')->where('post_id',$id1)
-                            ->where('comment_id',$id2)->get();
-
-        $post = DB::table('posts')->find($id1);
+        $likes = DB::table('comment_likes')->where('post_id',$post_id)
+                            ->where('comment_id',$comment_id)->get();
+        $post = DB::table('posts')->find($post_id);
         $user_id = $post->user_id;
         $user_friends = DB::table('user_friends')->where('user_from',$user_id)
             ->orWhere('user_to',$user_id)->get()->toArray();

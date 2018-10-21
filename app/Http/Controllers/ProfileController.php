@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
-    public function index($id)
+    public function index($user_id)
     {
         // Get count of the posts
-        $posts = DB::table('posts')->where('user_id', $id)->count();
+        $posts = DB::table('posts')->where('user_id', $user_id)->count();
 //        $posts = Post::count()-1;
-        $user = DB::table('users')->where('id', $id)->first();
+        $user = DB::table('users')->where('id', $user_id)->first();
         if ($user == null) {
             abort(404);
         }

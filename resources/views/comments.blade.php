@@ -23,16 +23,26 @@
                     $comment_user = \App\User::find($comment->user_id);
                     @endphp
                      @if(count($comment_like) > 0)
-                        <a href="/comment/{{$comment_like[0]->id}}/commentUnlike" class="btn btn-info">UnLike</a>
+                        <form class="d-inline" method="post" action="/comments/{{$comment_like[0]->id}}/unlike">
+                            @csrf
+                            <button class="btn btn-info">UnLike</button>
+                        </form>
                      @else
-                        <a href="/{{$post->id}}/comment/{{$comment->id}}/commentLike" class="btn btn-info">Like</a>
+                         <form class="d-inline" method="post" action="/comments/{{$comment->id}}/post/{{$post->id}}/like">
+                             @csrf
+                            <button  type="submit" class="btn btn-info">Like</button>
+                         </form>
                      @endif
                             <br><br>
-                    <a href="/{{$post->id}}/comment/{{$comment->id}}/likes" class="btn-primary">Show All Likes</a> <b>{{$post_comment_likes}} Likes</b>
+                    <a href="/comments/{{$comment->id}}/post/{{$post->id}}/likes" class="btn-primary">Show All Likes</a> <b>{{$post_comment_likes}} Likes</b>
                     </td>
                     <td>@if($comment_user->name === auth()->user()->name)  <b>Me</b> @else <b> {{$comment_user->name}} </b> @endif
                     @if($post->user_id == auth()->user()->id || (auth()->user()->id == $comment_user->id))
-                            <a class="btn btn-danger float-md-right" href="/comment/{{$comment->id}}/delete">Delete</a>@endif
+                        <form class="d-inline" method="post" action="/comments/{{$comment->id}}/delete">
+                            @csrf
+                            <button class="btn btn-danger float-md-right" type="submit">Delete</button>
+                        </form>
+                    @endif
                     </td>
                 </tr>
                 @empty
@@ -44,7 +54,7 @@
         </table>
     </div>
     <div class="text-md-center">
-        <form method="post" action="/add/comment">
+        <form class="d-inline" method="post" action="/comments/add">
         {{csrf_field()}}
         <input type="hidden" name="post_id" value="{{$post->id}}">
         <textarea cols="30" rows="3"  name="body" placeholder="Write Your Comment Here"></textarea>
