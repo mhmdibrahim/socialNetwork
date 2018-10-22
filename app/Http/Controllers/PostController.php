@@ -13,7 +13,8 @@ class PostController extends Controller
     }
     public function index($user_id)
     {
-        $posts = DB::table('posts')->where('user_id', $user_id)->get();
+        $posts = DB::table('posts')->where('user_id', $user_id)->
+                orWhere('origin_user_id',$user_id)->orderBy('id', 'desc')->get();
         // Get all the friends of user with $id
         $user_friend = DB::table('user_friends')->where('user_from', $user_id)
             ->orWhere('user_to', $user_id)->get();
@@ -66,6 +67,7 @@ class PostController extends Controller
 
     public function delete($post_id)
     {
+//        dd($post_id);
         DB::table('posts')->where('id', $post_id)->delete();
         return redirect()->back();
     }
@@ -139,7 +141,8 @@ class PostController extends Controller
         if(!in_array(auth()->user()->id,$friends) && auth()->user()->id !=$user_id){
             return abort(404);
         }
-        $comments = DB::table('comments')->where('post_id',$post_id)->get();
+        $comments = DB::table('comments')->where('post_id',$post_id)
+                                        ->orderBy('id','desc')->get();
         return view('comments')->with('comments',$comments)
             ->with('post',$post);
     }

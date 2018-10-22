@@ -29,7 +29,7 @@
                     @if($post->origin_user_id == null)
                         <td><b>{{$post->text}}</b>
                             {{--enable delete if the viewer of the profile is the profile owner--}}
-                            @if(auth()->user()->id== $post->user_id)
+                            @if(auth()->user()->id== $post->user_id )
                                 <form class="d-inline" method="post" action="/posts/{{$post->id}}/delete">
                                     @csrf
                                     <button type="submit" class="float-md-right btn btn-danger">Delete
@@ -68,7 +68,7 @@
                             <a href="/posts/{{$post->id}}/comments" class="btn btn-primary">Show Post Comments</a>
                             <b>( {{$comments}} Comments ) </b>
                         </td>
-                    @elseif($post->origin_user_id !=auth()->user()->id)
+                    @elseif($post->origin_user_id !==auth()->user()->id)
                         <td>
                             @php
                                 // The post creator
@@ -92,13 +92,29 @@
                             @php
                                 $origin_post= \Illuminate\Support\Facades\DB::table('posts')->find($post->orgin_post_id);
                             @endphp
-                            <a href="/post/{{$post->orgin_post_id}}/comments">Post</a>
+                            <a href="/posts/{{$post->orgin_post_id}}/comments">Post</a>
                             @if(in_array(auth()->user()->id,$friends))
                                 <br>
                                 <h3>{{$origin_post->text}}</h3>
-                            @else
+                                <form class="d-inline" method="post" action="/posts/{{$post->id}}/delete">
+                                    @csrf
+                                    <button type="submit" class="float-md-right btn btn-danger">Delete
+                                        Post</button>
+                                </form>
+                    @else
                                 <br>NoT Allowed To show Post
                             @endif
+                        </td>
+                    @elseif(auth()->user()->id == $post->origin_user_id)
+                        @php
+                            // The post creator
+                            // The owner of the profile being showed now
+                                $posted = \App\User::find($post->user_id);
+                                 $origin_post= \Illuminate\Support\Facades\DB::table('posts')->find($post->orgin_post_id);
+                            // Friends of the post creator
+                        @endphp
+                        <td>
+                            <h3>{{$posted->name}} Shared Your Post {{$origin_post->text}}</h3>
                         </td>
                     @endif
                 </tr>

@@ -27,10 +27,14 @@
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Home') }}
                 </a>
+                <a class=navbar-brand href="/{{auth()->id()}}/notifications">
+                    Notifications
+                </a>
 
                 <a class="navbar-brand" href="/profile/{{auth()->user()->id}}">
                     Profile
                 </a>
+
 
                 <a class="navbar-brand" href="/friends">
                     Friends

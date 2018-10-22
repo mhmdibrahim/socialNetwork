@@ -39,16 +39,26 @@ class UserController extends Controller
             }
         }
           $users =DB::table('users')->whereIn('id',$firendsIds)->get();
-//        $users = User::whereIn('id', $firendsIds)->get();
-
         return view('myfriends')->with('friends', $users);
     }
 
-    public function deleteFriend($id){
+    public function deleteFriend($id)
+    {
         DB::table('user_friends')->where('user_to',auth()->user()->id)
             ->where('user_from',$id)
             ->orWhere('user_from',auth()->user()->id)
             ->where('user_to',$id)->delete();
         return redirect()->back();
+    }
+
+    public function notifications($user_id)
+    {
+        if ($user_id == auth()->id()){
+            $posts = DB::table('posts')->where('origin_user_id',$user_id)->orderBy('id','desc')->get();
+        }
+        else{
+            abort(404);
+        }
+        return view('notification')->with('posts',$posts);
     }
 }
