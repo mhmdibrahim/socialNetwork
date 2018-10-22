@@ -13,6 +13,9 @@ class CommentController extends Controller
     }
     public function add(Request $request)
     {
+        $request->validate([
+            'body'=>'string|required',
+        ]);
         DB::table('comments')->insert([
             'body'=>$request->body,
             'user_id'=>auth()->user()->id,

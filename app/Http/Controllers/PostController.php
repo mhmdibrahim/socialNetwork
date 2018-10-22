@@ -39,6 +39,9 @@ class PostController extends Controller
 
     public function create(Request $request)
     {
+        $request->validate([
+            'post_create'=>'string|required',
+        ]);
         DB::table('posts')->insert([
             'user_id' => auth()->id(),
             'text' => $request->post_create,

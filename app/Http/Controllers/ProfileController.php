@@ -47,13 +47,13 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
+        $request->validate([
+            'name'=>'string|required',
+        ]);
         DB::table('users')->where('id',auth()->user()->id)
             ->update([
                 'name' => $request->name ,
             ]);
-//        $user = User::find(auth()->user()->id);
-//        $user->name = $request->name;
-//        $user->save();
         return redirect('/profile/' . auth()->id());
     }
 }
