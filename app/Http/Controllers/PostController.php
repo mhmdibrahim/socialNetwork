@@ -10,31 +10,19 @@ class PostController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('is_my_friend')->only([
+            'index' ,
+            'showComments'
+        ]);
     }
     public function index($user_id)
     {
         $posts = DB::table('posts')->where('user_id', $user_id)->
                 orWhere('origin_user_id',$user_id)->orderBy('id', 'desc')->get();
-        // Get all the friends of user with $id
-        $user_friend = DB::table('user_friends')->where('user_from', $user_id)
-            ->orWhere('user_to', $user_id)->get();
-        $friends = [];
-        foreach ($user_friend as $friend) {
-            if ($friend->user_from == $user_id) {
-                $friends[] = $friend->user_to;
-            } else {
-                $friends[] = $friend->user_from;
-            }
-        }
-
-        // if the current authenticated user is not in his friends
-        if (!in_array(auth()->user()->id, $friends) && auth()->user()->id != $user_id) {
-            return abort(404);
-        }
 
         return view('post')->with('posts', $posts)
             ->with('id', $user_id)
-            ->with('users_friends', $friends);
+            ->with('users_friends', request()->friendsIds);
     }
 
     public function create(Request $request)
@@ -126,23 +114,11 @@ class PostController extends Controller
 
     }
 
-    public function showComments($post_id)
+    public function showComments($user_id, $post_id)
     {
         $post = DB::table('posts')->find($post_id);
-        $user_id = $post->user_id ;
-        $user_friend =DB::table('user_friends')->where('user_from',$user_id)
-            ->orWhere('user_to',$user_id)->get();
-        $friends=[];
-        foreach ($user_friend as $friend){
-            if ($friend->user_from == $user_id){
-                $friends[] = $friend->user_to ;
-            }
-            else{
-                $friends[] = $friend->user_from ;
-            }
-        }
-        if(!in_array(auth()->user()->id,$friends) && auth()->user()->id !=$user_id){
-            return abort(404);
+        if(! $post){
+            abort(404);
         }
         $comments = DB::table('comments')->where('post_id',$post_id)
                                         ->orderBy('id','desc')->get();

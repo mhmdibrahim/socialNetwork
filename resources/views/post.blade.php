@@ -65,7 +65,7 @@
                                 </form>
                             @endif
                             <br> <br>
-                            <a href="/posts/{{$post->id}}/comments" class="btn btn-primary">Show Post Comments</a>
+                            <a href="/posts/{{$post->user_id}}/{{$post->id}}/comments" class="btn btn-primary">Show Post Comments</a>
                             <b>( {{$comments}} Comments ) </b>
                         </td>
                     @elseif($post->origin_user_id !==auth()->user()->id)
