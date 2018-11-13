@@ -29,7 +29,7 @@
                     @if($post->origin_user_id == null)
                         <td><b>{{$post->text}}</b>
                             {{--enable delete if the viewer of the profile is the profile owner--}}
-                            @if(auth()->user()->id== $post->user_id )
+                            @if(auth()->user()->id== $post->user_id)
                                 <form class="d-inline" method="post" action="/posts/{{$post->id}}/delete">
                                     @csrf
                                     <button type="submit" class="float-md-right btn btn-danger">Delete
@@ -96,11 +96,13 @@
                             @if(in_array(auth()->user()->id,$friends))
                                 <br>
                                 <h3>{{$origin_post->text}}</h3>
+                            @if($post->user_id == $origin_post->user_id || $post->user_id == auth()->user()->id)
                                 <form class="d-inline" method="post" action="/posts/{{$post->id}}/delete">
                                     @csrf
                                     <button type="submit" class="float-md-right btn btn-danger">Delete
                                         Post</button>
                                 </form>
+                            @endif
                     @else
                                 <br>NoT Allowed To show Post
                             @endif

@@ -53,6 +53,7 @@ Route::prefix('posts')->group(function (){
     Route::get('{user_id}','PostController@index');
     Route::get('{post_id}/comments','PostController@showComments');
     Route::post('{post_id}/share','PostController@share');
+
 });
 
 Route::prefix('comments')->group(function (){
@@ -65,5 +66,4 @@ Route::prefix('comments')->group(function (){
 
 Route::get('/friends','UserController@showFriends');
 Route::get('/{id}/friend/delete','UserController@deleteFriend');
-
 Route::get('{id}/notifications','UserController@notifications');
