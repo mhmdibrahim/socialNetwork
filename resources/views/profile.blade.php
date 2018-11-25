@@ -12,12 +12,12 @@
                          <td>{{$user->email}}</td>
                     </tr>
                 </table>
-            @if(auth()->user()->id == $user->id)
+            @if($isMe)
                 <div class="form-group">
                     <a class="btn btn-info" href="/profile/edit">Edit Profile</a>
                 </div>
             @endif
-            @if(in_array($user->id,$myfriends))
+            @if($isMyFriend || $isMe)
                 <div class="form-group">
                 <a class="btn btn-info" href="/posts/{{$user->id}}">Show All Posts</a><b> ({{$posts}} Posts)</b>
                 </div>

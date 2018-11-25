@@ -44,6 +44,7 @@ Route::prefix('profile')->group(function (){
     Route::get('{user_id}','ProfileController@index');
 });
 
+
 Route::prefix('posts')->group(function (){
     Route::post('create','PostController@create');
     Route::post('{post_id}/like','PostController@like');
@@ -67,3 +68,11 @@ Route::prefix('comments')->group(function (){
 Route::get('/friends','UserController@showFriends');
 Route::get('/{id}/friend/delete','UserController@deleteFriend');
 Route::get('{id}/notifications','UserController@notifications');
+
+Route::prefix('testapi')->namespace('API')->group(function (){
+    Route::prefix('profile')->group(function (){
+        Route::get('edit','ProfileController@edit');
+        Route::post('update','ProfileController@update');
+        Route::get('{user_id}','ProfileController@index');
+    });
+});

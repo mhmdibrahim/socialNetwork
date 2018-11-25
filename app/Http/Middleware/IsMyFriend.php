@@ -32,7 +32,6 @@ class IsMyFriend
                 $friendsIds[] = $friend->user_from;
             }
         }
-        $friendsIds[] = auth()->id();
         // if the current authenticated user is not in his friends
         if (!in_array(auth()->user()->id, $friendsIds) && auth()->user()->id != $request->user_id) {
             return abort(401);

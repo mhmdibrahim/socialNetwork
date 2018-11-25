@@ -10,10 +10,8 @@ class ProfileController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('is_my_friend')->only([
-            'index',
-        ]);
     }
+
     public function index($user_id)
     {
         // Get count of the posts
@@ -24,8 +22,19 @@ class ProfileController extends Controller
             abort(404);
         }
 //        $user = User::where('id', $id)->get();
-//        $friends = DB::table('user_friends')->where('user_from', auth()->user()->id)
-//            ->orWhere('user_to', auth()->user()->id)->get();
+        $isMe = auth()->id() == $user_id;
+        $isMyFriend = false;
+        if (!$isMe) {
+            $isMyFriend = (bool) DB::table('user_friends')
+                ->where(function ($query) use ($user_id) {
+                    $query->where('user_from', auth()->id())
+                        ->where('user_to', $user_id);
+                })
+                ->orWhere(function ($query) use ($user_id) {
+                    $query->where('user_from', $user_id)
+                        ->where('user_to', auth()->id());
+                })->count();
+        }
 ////        dd($friends);
 ////        $friends = User_Friend::where('user_from', auth()->user()->id)
 ////            ->orWhere('user_to', auth()->user()->id)->get();
@@ -39,7 +48,9 @@ class ProfileController extends Controller
 //        }
 //        dd(request()->all());
 //        $my_friends[] = auth()->user()->id;
-        return view('profile')->with('myfriends', request()->friendsIds)
+        return view('profile')
+            ->with('isMyFriend', $isMyFriend)
+            ->with('isMe', $isMe)
             ->with('user', $user)
             ->with('posts', $posts);
     }
@@ -52,11 +63,11 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'name'=>'string|required',
+            'name' => 'string|required',
         ]);
-        DB::table('users')->where('id',auth()->user()->id)
+        DB::table('users')->where('id', auth()->user()->id)
             ->update([
-                'name' => $request->name ,
+                'name' => $request->name,
             ]);
         return redirect('/profile/' . auth()->id());
     }

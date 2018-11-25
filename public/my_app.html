@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MyApp</title>
+</head>
+<body>
+<div id="main">
+
+</div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    window.onload = route;
+    window.onhashchange = route;
+
+    function route() {
+        let path = window.location.hash.slice(1);
+        let pathParts = path.split('/');
+        if(pathParts.length == 2){
+            let page = pathParts[0];
+            switch (page){
+                case 'profile':
+                    let profileId = pathParts[1];
+                    console.log(profileId);
+                    showProfilePage(profileId);
+                    break;
+            }
+        }
+    }
+    function showProfilePage(profileId) {
+        axios.get('/testapi/profile/' + profileId).then((response) => {
+            let profileOwner = response.data.profile_owner;
+            let main = document.querySelector('#main');
+            let html = `
+                <h1>Name: ${profileOwner.name}</h1>
+                <h1>Email: ${profileOwner.email}</h1>
+            `;
+            if(response.data.is_me || response.data.is_my_friend){
+                html += `
+                    <a href=#>${response.data.posts_count} posts</a>
+                `;
+            }
+            if(response.data.is_me){
+                html += `
+                    <a href="#">Edit profile</a>
+                `
+            }
+
+            main.innerHTML = html;
+        });
+    }
+</script>
+</body>
+</html>
