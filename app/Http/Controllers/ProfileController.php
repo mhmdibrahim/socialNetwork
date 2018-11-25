@@ -10,7 +10,7 @@ class ProfileController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('isMyFriend')->only([
+        $this->middleware('is_my_friend')->only([
             'index',
         ]);
     }
@@ -37,10 +37,11 @@ class ProfileController extends Controller
 //                $my_friends[] = $friend->user_from;
 //            }
 //        }
+//        dd(request()->all());
 //        $my_friends[] = auth()->user()->id;
-        return view('profile')->with('myfriends', \request()->friendsIds)
+        return view('profile')->with('myfriends', request()->friendsIds)
             ->with('user', $user)
-            ->with('posts', $posts); 
+            ->with('posts', $posts);
     }
 
     public function edit()
