@@ -6,6 +6,7 @@ use App\User;
 use App\User_Friend;
 use App\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use function PhpParser\filesInDir;
 
 class HomeController extends Controller
@@ -29,18 +30,15 @@ class HomeController extends Controller
     {
         $requests = Request::where('user_from',auth()->user()->id)->get()->pluck('user_to')->toArray();
 //        dd($requests->toArray());
-        $user_friends = User_Friend::where('user_from',auth()->user()->id)
-                                    ->orWhere('user_to',auth()->user()->id)->get();
-        $friendsIds = [];
+        $friendsIds = DB::table('user_friends')
+            ->selectRaw('user_to as friend_id')
+            ->where('user_from', auth()->id())
+        ->union(
+            DB::table('user_friends')->where('user_to',auth()->id())
+                ->selectRaw('user_from as friend_id')
+        )->get()->pluck('friend_id');
+        dd($friendsIds);
         //TODO: include myself in friends array
-
-        foreach ($user_friends as $friend){
-            if($friend->user_from == auth()->id()){
-                $friendsIds[] = $friend->user_to;
-            }else{
-                $friendsIds[] = $friend->user_from;
-            }
-        }
         $friendsIds[] = auth()->user()->id;
 //        dd($friendsIds);
 //        dd($user_friends);
