@@ -57,9 +57,9 @@
                                     likes) </b>
                                 </form>
                             @endif
-                                    <a type="submit" class="btn btn-outline-info" href="/posts/{{$post->id}}/likes"><b>show All Likes</b></a>
+                                    <a type="submit" class="btn btn-outline-info" href="/posts/{{$post->user_id}}/{{$post->id}}/likes"><b>show All Likes</b></a>
                                 @if($post->user_id != auth()->user()->id)
-                                <form class="d-inline" method="post" action="/posts/{{$post->id}}/share">
+                                <form class="d-inline" method="post" action="/posts/{{$post->user_id}}/{{$post->id}}/share">
                                     @csrf
                                     <button type="submit" class="btn btn-dark"><b>Share</b></button>
                                 </form>
@@ -87,12 +87,12 @@
                                         }
                                     }
                             @endphp
-                            <a href="/{{$post->user_id}}/profile">{{$posted->name}}</a> Shared <a
-                                href="/{{$friend->id}}/profile">{{$friend->name}}'s</a>
+                            <a href="/profile/{{$post->user_id}}">{{$posted->name}}</a> Shared <a
+                                href="/profile/{{$friend->id}}">{{$friend->name}}'s</a>
                             @php
                                 $origin_post= \Illuminate\Support\Facades\DB::table('posts')->find($post->orgin_post_id);
                             @endphp
-                            <a href="/posts/{{$post->orgin_post_id}}/comments">Post</a>
+                            <a href="/posts/{{$post->user_id}}/{{$post->orgin_post_id}}/comments">Post</a>
                             @if(in_array(auth()->user()->id,$friends))
                                 <br>
                                 <h3>{{$origin_post->text}}</h3>

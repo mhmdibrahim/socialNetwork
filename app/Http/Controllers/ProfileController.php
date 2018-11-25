@@ -10,6 +10,9 @@ class ProfileController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('isMyFriend')->only([
+            'index',
+        ]);
     }
     public function index($user_id)
     {
@@ -21,23 +24,23 @@ class ProfileController extends Controller
             abort(404);
         }
 //        $user = User::where('id', $id)->get();
-        $friends = DB::table('user_friends')->where('user_from', auth()->user()->id)
-            ->orWhere('user_to', auth()->user()->id)->get();
-//        dd($friends);
-//        $friends = User_Friend::where('user_from', auth()->user()->id)
+//        $friends = DB::table('user_friends')->where('user_from', auth()->user()->id)
 //            ->orWhere('user_to', auth()->user()->id)->get();
-        $my_friends = [];
-        foreach ($friends as $friend) {
-            if ($friend->user_from == auth()->user()->id) {
-                $my_friends[] = $friend->user_to;
-            } else {
-                $my_friends[] = $friend->user_from;
-            }
-        }
-        $my_friends[] = auth()->user()->id;
-        return view('profile')->with('myfriends', $my_friends)
+////        dd($friends);
+////        $friends = User_Friend::where('user_from', auth()->user()->id)
+////            ->orWhere('user_to', auth()->user()->id)->get();
+//        $my_friends = [];
+//        foreach ($friends as $friend) {
+//            if ($friend->user_from == auth()->user()->id) {
+//                $my_friends[] = $friend->user_to;
+//            } else {
+//                $my_friends[] = $friend->user_from;
+//            }
+//        }
+//        $my_friends[] = auth()->user()->id;
+        return view('profile')->with('myfriends', \request()->friendsIds)
             ->with('user', $user)
-            ->with('posts', $posts);
+            ->with('posts', $posts); 
     }
 
     public function edit()

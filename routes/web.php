@@ -49,10 +49,10 @@ Route::prefix('posts')->group(function (){
     Route::post('{post_id}/like','PostController@like');
     Route::post('{post_id}/unlike','PostController@unlike');
     Route::post('{post_id}/delete','PostController@delete');
-    Route::get('{post_id}/likes','PostController@showLikes');
+    Route::get('{user_id}/{post_id}/likes','PostController@showLikes');
     Route::get('{user_id}','PostController@index');
     Route::get('{user_id}/{post_id}/comments','PostController@showComments');
-    Route::post('{post_id}/share','PostController@share');
+    Route::post('{user_id}/{post_id}/share','PostController@share');
 
 });
 
