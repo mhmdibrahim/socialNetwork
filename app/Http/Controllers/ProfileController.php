@@ -21,7 +21,7 @@ class ProfileController extends Controller
         if ($user == null) {
             abort(404);
         }
-//        $user = User::where('id', $id)->get();
+//       $user = User::where('id', $id)->get();
         $isMe = auth()->id() == $user_id;
         $isMyFriend = false;
         if (!$isMe) {

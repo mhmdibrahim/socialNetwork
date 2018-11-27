@@ -37,7 +37,6 @@ class PostController extends Controller
             'text' => $request->post_create,
         ]);
         return redirect()->back();
-
     }
 
     public function like($post_id)
