@@ -16,10 +16,11 @@ class FriendRequestController extends Controller
     public function index()
     {
         // Array of users' ids that I have sent requests to
-        $requests = DB::table('requests')->where('user_to', auth()->user()->id)->get()->pluck('user_from');
-        // Get the users out of the ids array
-        $users = DB::table('users')->whereIn('id', $requests)->get();
-
+        $users = DB::table('requests')
+            ->leftJoin('users','requests.user_from','=','users.id')
+            ->select('users.*')
+            ->where('requests.user_to','=',auth()->id())
+            ->get();
         return view('request')->with('users', $users);
     }
 
@@ -35,7 +36,8 @@ class FriendRequestController extends Controller
 
     public function cancel($to_id)
     {
-        $request = Request::where('user_from',auth()->user()->id)
+        $request = DB::table('requests')
+            ->where('user_from',auth()->user()->id)
             ->where('user_to',$to_id)->get()->pluck('id');
         /** @var $request Collection */
         if($request->isEmpty()){
@@ -52,16 +54,18 @@ class FriendRequestController extends Controller
             'user_to' => auth()->user()->id,
         ]);
 
-        $request = DB::table('requests')->where('user_to', auth()->user()->id)
-            ->where('user_from', $from_id)->get()->pluck('id');
-        DB::table('requests')->where('id', $request)->delete();
+        DB::table('requests')
+            ->where('user_to', auth()->user()->id)
+            ->where('user_from', $from_id)
+            ->delete();
         return redirect()->back();
     }
 
     public function reject($from_id)
     {
-        $request = DB::table('requests')->where('user_to', auth()->user()->id)->where('user_from', $from_id)->get()->pluck('id');
-        DB::table('requests')->where('id', $request)->delete();
+        DB::table('requests')
+            ->where('user_to',auth()->user()->id)
+            ->where('user_from', $from_id)->delete();
         return redirect()->back();
     }
 }

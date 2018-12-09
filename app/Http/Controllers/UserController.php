@@ -19,27 +19,32 @@ class UserController extends Controller
     public function index()
     {
         // Array of users' ids that I have sent requests to
-        $requests = DB::table('requests')->where('user_to', auth()->user()->id)->get()->pluck('user_from');
-        // Get the users out of the ids array
-        $users = DB::table('users')->whereIn('id',$requests)->get();
-
+        $users = DB::table('requests')
+            ->leftJoin('users','requests.user_from','=','users.id')
+            ->select('users.*')
+            ->where('requests.user_to','=',auth()->id)
+            ->get();
+//        dd($requests);
+//        $requests = DB::table('requests')->where('user_to', auth()->user()->id)->get()->pluck('user_from');
+//        // Get the users out of the ids array
+//        $users = DB::table('users')->whereIn('id',$requests)->get();
         return view('request')->with('users', $users);
     }
 
     public function showFriends()
     {
-        $friends = DB::table('user_friends')->where('user_from', auth()->user()->id)
-                        ->orWhere('user_to', auth()->user()->id)->get();
-        $firendsIds = [];
-        foreach ($friends as $friend) {
-            if ($friend->user_from == auth()->user()->id) {
-                $firendsIds[] = $friend->user_to;
-            } else {
-                $firendsIds[] = $friend->user_from;
-            }
-        }
-          $users =DB::table('users')->whereIn('id',$firendsIds)->get();
-        return view('myfriends')->with('friends', $users);
+        $users = DB::table('user_friends')
+            ->leftJoin('users',function ($join){
+                $join->on('user_friends.user_from','=','users.id');
+                $join->orOn('user_friends.user_to','=','users.id');
+                $join->on('user_friends.user_from','=',DB::raw(auth()->id()));
+                $join->on('user_friends.user_to','=',DB::raw(auth()->id()));
+            })
+            ->distinct()
+            ->select('users.*')
+            ->whereNotIn('users.id',[auth()->id()])
+            ->get();
+        return view('myfriends')->with('friends',$users);
     }
 
     public function deleteFriend($id)
@@ -54,7 +59,10 @@ class UserController extends Controller
     public function notifications($user_id)
     {
         if ($user_id == auth()->id()){
-            $posts = DB::table('posts')->where('origin_user_id',$user_id)->orderBy('id','desc')->get();
+            $posts = DB::table('posts')
+                ->where('origin_user_id',$user_id)
+                ->orderBy('id','desc')
+                ->get();
         }
         else{
             abort(404);

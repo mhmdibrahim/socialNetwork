@@ -13,31 +13,23 @@
             @forelse($comments as $comment)
                 <tr>
                     <td>{{$comment->body}}
-                    @php
-                    $comment_like = \Illuminate\Support\Facades\DB::table('comment_likes')->where('post_id',$post->id)
-                                                                    ->where('user_id',auth()->user()->id)
-                                                                    ->where('comment_id',$comment->id)->get();
 
-                    $post_comment_likes = \Illuminate\Support\Facades\DB::table('comment_likes')->where('post_id',$post->id)
-                                                                    ->where('comment_id',$comment->id)->count();
-                    $comment_user = \App\User::find($comment->user_id);
-                    @endphp
-                     @if(count($comment_like) > 0)
-                        <form class="d-inline" method="post" action="/comments/{{$comment_like[0]->id}}/unlike">
+                     @if($comment->likesCount > 0)
+                        <form class="d-inline" method="post" action="/comments/{{$comment->comment_like_id}}/unlike">
                             @csrf
                             <button class="btn btn-info">UnLike</button>
                         </form>
                      @else
-                         <form class="d-inline" method="post" action="/comments/{{$comment->id}}/post/{{$post->id}}/like">
+                         <form class="d-inline" method="post" action="/comments/{{$comment->id}}/post/{{$comment->post_id}}/like">
                              @csrf
                             <button  type="submit" class="btn btn-info">Like</button>
                          </form>
                      @endif
                             <br><br>
-                    <a href="/comments/{{$comment->id}}/post/{{$post->id}}/likes" class="btn-primary">Show All Likes</a> <b>{{$post_comment_likes}} Likes</b>
+                    <a href="/comments/{{$comment->user_id}}/{{$comment->id}}/post/{{$comment->post_id}}/likes" class="btn-primary">Show All Likes</a> <b>{{$comment->likesCount}} Likes</b>
                     </td>
-                    <td>@if($comment_user->name === auth()->user()->name)  <b>Me</b> @else <b> {{$comment_user->name}} </b> @endif
-                    @if($post->user_id == auth()->user()->id || (auth()->user()->id == $comment_user->id))
+                    <td>@if($comment->user_name === auth()->user()->name)  <b>Me</b> @else <b> {{$comment->user_name}} </b> @endif
+                    @if($comment->user_id == auth()->user()->id || (auth()->user()->id == $comment->user_id))
                         <form class="d-inline" method="post" action="/comments/{{$comment->id}}/delete">
                             @csrf
                             <button class="btn btn-danger float-md-right" type="submit">Delete</button>

@@ -14,14 +14,14 @@ class ProfileController extends Controller
 
     public function index($user_id)
     {
-        // Get count of the posts
-        $posts = DB::table('posts')->where('user_id', $user_id)->count();
-//        $posts = Post::count()-1;
-        $user = DB::table('users')->where('id', $user_id)->first();
+        $user = DB::table('posts')
+            ->leftJoin('users','posts.user_id','users.id')
+            ->select(DB::raw('count(*) as postsCount'),'users.*')
+            ->groupBy('posts.user_id')
+            ->where('posts.user_id','=', $user_id)->first();
         if ($user == null) {
             abort(404);
         }
-//       $user = User::where('id', $id)->get();
         $isMe = auth()->id() == $user_id;
         $isMyFriend = false;
         if (!$isMe) {
@@ -35,24 +35,11 @@ class ProfileController extends Controller
                         ->where('user_to', auth()->id());
                 })->count();
         }
-////        dd($friends);
-////        $friends = User_Friend::where('user_from', auth()->user()->id)
-////            ->orWhere('user_to', auth()->user()->id)->get();
-//        $my_friends = [];
-//        foreach ($friends as $friend) {
-//            if ($friend->user_from == auth()->user()->id) {
-//                $my_friends[] = $friend->user_to;
-//            } else {
-//                $my_friends[] = $friend->user_from;
-//            }
-//        }
-//        dd(request()->all());
-//        $my_friends[] = auth()->user()->id;
+
         return view('profile')
             ->with('isMyFriend', $isMyFriend)
             ->with('isMe', $isMe)
-            ->with('user', $user)
-            ->with('posts', $posts);
+            ->with('user', $user);
     }
 
     public function edit()

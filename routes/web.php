@@ -60,7 +60,7 @@ Route::prefix('posts')->group(function (){
 Route::prefix('comments')->group(function (){
     Route::post('/add','CommentController@add');
     Route::post('/{comment_id}/delete','CommentController@delete');
-    Route::get('{comment_id}/post/{post_id}/likes','CommentController@showLikes');
+    Route::get('{user_id}/{comment_id}/post/{post_id}/likes','CommentController@showLikes');
     Route::post('{comment_id}/post/{post_id}/like','CommentController@like');
     Route::post('{like_id}/unlike','CommentController@unlike');
 });

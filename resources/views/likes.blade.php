@@ -6,13 +6,10 @@
                 <th>Names</th>
             </thead>
             <tbody>
-            @foreach($likes as $like)
+            @foreach($users as $user)
             <tr>
                 <td><b>
-                        @php
-                         $user = \App\User::find($like->user_id);
-                        @endphp
-                        {{$user->name}}
+                        {{$user->user_name}}
                     </b></td>
             </tr>
             @endforeach

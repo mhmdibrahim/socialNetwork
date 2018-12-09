@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="text-md-center">
-        @if($id == auth()->user()->id)
+        @if($isMe)
             <form method="post" action="/posts/create">
                 @csrf
                 <div class="form-group">
@@ -29,31 +29,27 @@
                     @if($post->origin_user_id == null)
                         <td><b>{{$post->text}}</b>
                             {{--enable delete if the viewer of the profile is the profile owner--}}
-                            @if(auth()->user()->id== $post->user_id)
+                            @if($isMe == true && $isMe == $post->user_id)
                                 <form class="d-inline" method="post" action="/posts/{{$post->id}}/delete">
                                     @csrf
                                     <button type="submit" class="float-md-right btn btn-danger">Delete
-                                    Post</button>
+                                        Post</button>
                                 </form>
                             @endif
                             <br>
                             @php
-                                $likes= \App\Like::where('post_id',$post->id)->count();
-                                $comments = \App\Comment::where('post_id',$post->id)->count();
-                                $like  = \App\Like::where('post_id',$post->id)
-                                                    ->where('user_id',auth()->user()->id)->count();
+                                $like  = \App\Like::where('post_id',$post->id)->where('likes.user_id',auth()->user()->id)->count();
                             @endphp
-
                             @if($like > 0)
                                 <form class="d-inline" method="post" action="/posts/{{$post->id}}/unlike">
                                     @csrf
-                                    <button type="submit" class="btn btn-outline-info">UnLike</button> <b> ({{$likes}}
+                                    <button type="submit" class="btn btn-outline-info">UnLike</button> <b> ({{$post->likesCount}}
                                         likes) </b>
                                 </form>
                             @else
                                 <form class="d-inline" method="post" action="/posts/{{$post->id}}/like">
                                     @csrf
-                                    <button type="submit" class="btn btn-outline-info">Like</button> <b> ({{$likes}}
+                                    <button type="submit" class="btn btn-outline-info">Like</button> <b> ({{$post->likesCount}}
                                     likes) </b>
                                 </form>
                             @endif
@@ -66,7 +62,7 @@
                             @endif
                             <br> <br>
                             <a href="/posts/{{$post->user_id}}/{{$post->id}}/comments" class="btn btn-primary">Show Post Comments</a>
-                            <b>( {{$comments}} Comments ) </b>
+                            <b>( {{$post->commentsCount}} Comments ) </b>
                         </td>
                     @elseif($post->origin_user_id !==auth()->user()->id)
                         <td>
@@ -93,7 +89,7 @@
                                 $origin_post= \Illuminate\Support\Facades\DB::table('posts')->find($post->orgin_post_id);
                             @endphp
                             <a href="/posts/{{$post->user_id}}/{{$post->orgin_post_id}}/comments">Post</a>
-                            @if(in_array(auth()->user()->id,$friends))
+                            @if(in_array(auth()->user()->id,$users_friends))
                                 <br>
                                 <h3>{{$origin_post->text}}</h3>
                             @if($post->user_id == $origin_post->user_id || $post->user_id == auth()->user()->id)
@@ -123,7 +119,6 @@
             @empty
                 <tr>
                     <td>No Posts Founded</td>
-
                 </tr>
             @endforelse
             </tbody>

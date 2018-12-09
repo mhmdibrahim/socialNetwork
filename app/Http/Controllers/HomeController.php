@@ -41,29 +41,24 @@ class HomeController extends Controller
                     DB::table('user_friends')->where('user_to',auth()->id())
                         ->selectRaw('user_from as friend_id')
                 )->pluck('friend_id'))->whereNotIn('users.id',[auth()->id()])->orderBy('users.id','asc')->paginate(10);
-//        dd($members);
-//        $first = DB::table('users')->leftJoin('requests','users.id','=','requests.user_to')
-//            ->select('users.*','user_from')->where('user_from','=',auth()->id());
-////        dd($first);
-//        $second = DB::table('users')->whereNotIn('id',DB::table('user_friends')
-//            ->selectRaw('user_to as friend_id')
-//            ->where('user_from', auth()->id())
-//            ->union(
-//                DB::table('user_friends')->where('user_to',auth()->id())
-//                    ->selectRaw('user_from as friend_id')
-//            )->pluck('friend_id'))->whereNotIn('id',[auth()->id()])->union($first)->get();
-//        dd($second);
 //
-//        $requests = Request::where('user_from',auth()->user()->id)->get()->pluck('user_to')->toArray();
-////        dd($requests->toArray());
-//        $users = DB::table('users')->whereNotIn('id',DB::table('user_friends')
-//            ->selectRaw('user_to as friend_id')
-//            ->where('user_from', auth()->id())
-//            ->union(
-//                DB::table('user_friends')->where('user_to',auth()->id())
-//                    ->selectRaw('user_from as friend_id')
-//            )->pluck('friend_id'))->get();
-//            dd($users);
+//        $users = DB::table('users')
+//            ->leftJoin('requests',function ($join){
+//            $join->on('users.id','=','requests.user_to');
+//            $join->on('requests.user_from' ,'=' ,DB::raw(auth()->id()));
+//        })->leftJoin('user_friends',function($join){
+//            $join->on('users.id','=','user_friends.user_from');
+//            $join->on('user_friends.user_to','=',DB::raw(auth()->id()));
+//            $join->orOn('users.id','=','user_friends.user_to');
+//            $join->orOn('user_friends.user_from','=',DB::raw(auth()->id()));
+//        })->get();
+//           ->select('users.*','requests.user_from')
+//          ->where('users.id','!=',auth()->id())
+//          ->where('user_friends.user_from','=',null)
+//          ->where('user_friends.user_to','=',null)
+//            ->orderBy('users.id','asc')->get();
+//        dd($users);
+
         return view('home')->with('users',$members);
     }
 
@@ -77,14 +72,13 @@ class HomeController extends Controller
     }
 
     public function cancelRequest($id){
-        $request = Request::where('user_from',auth()->user()->id)
+        $req = Request::where('user_from',auth()->user()->id)
                             ->where('user_to',$id)->get()->pluck('id');
         /** @var $request Collection */
-        if($request->isEmpty()){
+        if($req->isEmpty()){
             abort(404);
         }
-        Request::destroy($request);
+        Request::destroy($req);
         return redirect()->route('home');
-
     }
 }
