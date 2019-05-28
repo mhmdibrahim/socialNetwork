@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\myNotification;
 use App\User;
 use App\User_Friend;
 use App\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use function PhpParser\filesInDir;
@@ -29,7 +31,13 @@ class HomeController extends Controller
     public function index()
 
     {
+        $when = Carbon::now()->addSecond(10);
+//        $user = DB::table('users')->where('id',auth()->id())
+//            ->notify(new myNotification())->get();
+
+        $data = [];
         // another soln
+        $user=User::find(auth()->id());
         $members = DB::table('users')->leftJoin('requests',function ($join){
             $join->on('users.id','=','requests.user_to');
             $join->on('requests.user_from' ,'=' ,DB::raw(auth()->id()));
@@ -58,8 +66,8 @@ class HomeController extends Controller
 //          ->where('user_friends.user_to','=',null)
 //            ->orderBy('users.id','asc')->get();
 //        dd($users);
-
-        return view('home')->with('users',$members);
+        $notifications=$user->notifications()->get();
+        return view('home')->with('users',$members)->with('notifications',$notifications);
     }
 
     public function sentRequest($id){

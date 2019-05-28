@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 //use Illuminate\Http\Request;
+use App\Notifications\myNotification;
 use App\Request;
 use App\User;
 use Illuminate\Support\Facades\DB;
-
+use Auth;
 class FriendRequestController extends Controller
 {
     public function __construct()
@@ -15,6 +16,7 @@ class FriendRequestController extends Controller
     }
     public function index()
     {
+
         // Array of users' ids that I have sent requests to
         $users = DB::table('requests')
             ->leftJoin('users','requests.user_from','=','users.id')
@@ -26,7 +28,8 @@ class FriendRequestController extends Controller
 
     public function send($to_id)
     {
-        User::findOrFail($to_id);
+        $user=User::findOrFail($to_id);
+        $user->notify(new myNotification(User::find(Auth::id())));
         $request = new Request();
         $request->user_from = auth()->user()->id;
         $request->user_to = $to_id;
